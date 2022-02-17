@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import argparse
 import sys
+import logging
 
 from . import runfio
 
@@ -10,6 +11,7 @@ def check_args(settings):
     try:
         parser = get_arguments(settings)
         args = parser.parse_args()
+        logging.basicConfig(level=args.loglevel)
 
     except OSError:
         parser.print_help()
@@ -265,6 +267,12 @@ def get_arguments(settings):
         default=settings["fio_path"],
         type=str,
     )
+    parser.add_argument(
+        '--verbose',
+        help="Be verbose",
+        action="store_const", dest="loglevel", const=logging.INFO,
+        default=logging.WARNING,
+    )
     return parser
 
 
@@ -298,5 +306,6 @@ def get_argument_description():
         "entire_device": "Benchmark entire device",
         "ceph_pool": "Ceph RBD pool",
         "fio_path": "Path to the fio executable",
+        "loglevel": "The logging level"
     }
     return descriptions

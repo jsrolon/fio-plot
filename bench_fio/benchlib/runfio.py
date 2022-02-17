@@ -5,11 +5,15 @@ import os
 import copy
 from numpy import linspace
 import time
+import logging
 
 from . import ( 
     supporting,
     checks
 )
+
+
+logger = logging.getLogger(__name__)
 
 
 def check_fio_version(settings):
@@ -36,13 +40,20 @@ def drop_caches(settings):
 
 
 def run_raw_command(command, env=None):
+    logger.info(f"Running {' '.join(command)}")
     result = subprocess.run(
         command, shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=env
     )
-    if result.returncode > 0 or (len(str(result.stderr)) > 3):
+
+    if result is not None:
         stdout = result.stdout.decode("UTF-8").strip()
+        logger.info(stdout)
+
+    if result.returncode > 0 or (len(str(result.stderr)) > 3):
         stderr = result.stderr.decode("UTF-8").strip()
-        print(f"\nAn error occurred: {stderr} - {stdout}")
+        logger.error("An error occurred")
+        logger.error(stderr)
+        # print(f"\nAn error occurred: {stderr} - {stdout}")
         sys.exit(1)
 
     return result
