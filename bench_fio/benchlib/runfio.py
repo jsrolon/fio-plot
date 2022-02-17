@@ -49,16 +49,19 @@ def run_raw_command(command, env=None):
 
 
 def run_command(settings, benchmark, command):
-    """This command sets up the environment that is used in conjunction
-    with the Fio .ini job file.
+    """The .ini templates take their values from environment variables.
+    This function obtains all the env vars as a dict, and appends the configuration
+    settings from args as env variables as well.
     """
     output_directory = supporting.generate_output_directory(settings, benchmark)
     env = os.environ
     settings = supporting.convert_dict_vals_to_str(settings)
     benchmark = supporting.convert_dict_vals_to_str(benchmark)
+
     env.update(settings)
     env.update(benchmark)
     env.update({"OUTPUT": output_directory})
+
     run_raw_command(command, env)
 
 
@@ -67,7 +70,7 @@ def run_fio(settings, benchmark):
     output_file = f"{output_directory}/{benchmark['mode']}-{benchmark['iodepth']}-{benchmark['numjobs']}.json"
 
     command = [
-        "fio",
+        settings["fio_path"],
         "--output-format=json",
         f"--output={output_file}",
         settings["template"],

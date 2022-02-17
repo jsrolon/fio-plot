@@ -22,7 +22,6 @@ from .benchlib import (
 
 def main():
     checks.check_encoding()
-    checks.check_if_fio_exists()
     settings = defaults.get_default_settings()
     args = argparsing.check_args(settings)
     customsettings = vars(args)

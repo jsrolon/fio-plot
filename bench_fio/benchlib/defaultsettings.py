@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import os
 import sys
+import shutil
 
 
 def get_default_settings():
@@ -9,7 +10,7 @@ def get_default_settings():
     settings = {}
     settings["target"] = []
     settings["template"] = os.path.join(dir_path, "..", "templates", "fio-job-template.fio")
-    settings["engine"] = "libaio"
+    settings["engine"] = ["libaio"]
     settings["mode"] = ["randread", "randwrite"]
     settings["iodepth"] = [1, 2, 4, 8, 16, 32, 64]
     settings["numjobs"] = [1, 2, 4, 8, 16, 32, 64]
@@ -32,8 +33,10 @@ def get_default_settings():
     settings["mixed"] = ["readwrite", "rw", "randrw"]
     settings["invalidate"] = 1
     settings["ceph_pool"] = None
+    settings["fio_path"] = "fio"
     settings["loop_items"] = [
         "target",
+        "engine",
         "mode",
         "iodepth",
         "numjobs",
@@ -50,6 +53,17 @@ def get_default_settings():
 
 
 def check_settings(settings):
+    if shutil.which(settings["fio_path"]) is None:
+        if os.path.exists(settings["fio_path"]):
+            if not os.access(settings["fio_path"], os.X_OK):
+                print(f"Fio binary at {settings['fio_path']} is not executable. Check its file permissions.")
+                print()
+                sys.exit(1)
+        else:
+            print(f"Fio executable at {settings['fio_path']} not found. Is Fio installed?")
+            print()
+            sys.exit(1)
+
     """Some basic error handling."""
     if not os.path.exists(settings["template"]):
         print()

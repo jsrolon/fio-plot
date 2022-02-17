@@ -82,6 +82,7 @@ def get_arguments(settings):
         help=f"Specify block size(s). (Default: {settings['block_size']}",
         default=settings["block_size"],
         nargs="+",
+        type=str,
     )
     ag.add_argument(
         "--iodepth",
@@ -162,9 +163,11 @@ def get_arguments(settings):
     ag.add_argument(
         "-e",
         "--engine",
-        help=f"Select the ioengine to use, see fio --enghelp \
+        help=f"Select the ioengines to use, see fio --enghelp \
             for an overview of supported engines. (Default: {settings['engine']}).",
         default=settings["engine"],
+        nargs="+",
+        type=str,
     )
     ag.add_argument(
         "--direct",
@@ -256,6 +259,12 @@ def get_arguments(settings):
         action="store_true",
         default=False,
     )
+    ag.add_argument(
+        "--fio-path",
+        help="Specify location of the fio executable. Useful for spdk-fio tests.",
+        default=settings["fio_path"],
+        type=str,
+    )
     return parser
 
 
@@ -288,5 +297,6 @@ def get_argument_description():
         "ss_ramp": "Steady state rampup",
         "entire_device": "Benchmark entire device",
         "ceph_pool": "Ceph RBD pool",
+        "fio_path": "Path to the fio executable",
     }
     return descriptions

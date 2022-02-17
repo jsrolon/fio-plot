@@ -5,14 +5,6 @@ import os
 from pathlib import Path
 
 
-def check_if_fio_exists():
-    command = "fio"
-    if shutil.which(command) is None:
-        print("Fio executable not found in path. Is Fio installed?")
-        print()
-        sys.exit(1)
-
-
 def check_encoding():
     try:
         print("\u3000")  # blank space
