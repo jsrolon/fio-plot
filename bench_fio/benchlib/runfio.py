@@ -75,7 +75,7 @@ def run_command(settings, benchmark, command):
 
 def run_fio(settings, benchmark):
     output_directory = supporting.generate_output_directory(settings, benchmark)
-    output_file = f"{output_directory}/{benchmark['mode']}-{benchmark['iodepth']}-{benchmark['numjobs']}.json"
+    output_file = f"{output_directory}/mode{benchmark['mode']}-iodepth{benchmark['iodepth']}-numjobs{benchmark['numjobs']}.json"
 
     command = [
         settings["fio_path"],
