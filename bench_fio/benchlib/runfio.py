@@ -40,7 +40,6 @@ def drop_caches(settings):
 
 
 def run_raw_command(command, env=None):
-    logger.info(f"Running [{' '.join(command)}]")
     result = subprocess.run(
         command, shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=env
     )
@@ -93,6 +92,7 @@ def run_fio(settings, benchmark):
 
     if not settings["dry_run"]:
         supporting.make_directory(output_directory)
+        logger.info(f"Running [{' '.join(command)}]")
         run_command(settings, benchmark, command)
     # else:
     #    pprint.pprint(command)
