@@ -62,15 +62,15 @@ def run_preflight_checks(settings):
         message = "\nWhen creating a graph to compare values, iodepth or numjobs must be one value.\n"
         pm = False
 
-        if settings["iodepth"]:
-            if len(settings["iodepth"]) > 1:
-                pm = True
-        if settings["numjobs"]:
-            if len(settings["numjobs"]) > 1:
-                pm = True
-        if pm:
-            print(message)
-            sys.exit(1)
+        # if settings["iodepth"]:
+        #     if len(settings["iodepth"]) > 1:
+        #         pm = True
+        # if settings["numjobs"]:
+        #     if len(settings["numjobs"]) > 1:
+        #         pm = True
+        # if pm:
+        #     print(message)
+        #     sys.exit(1)
 
         if len(settings["input_directory"]) < 2:
             print(

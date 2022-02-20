@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+import os.path
+
 import numpy as np
 import matplotlib.pyplot as plt
 import pprint
@@ -155,6 +157,41 @@ def chart_2dbarchart_jsonlogdata(settings, dataset):
 
 
 def compchart_2dbarchart_jsonlogdata(settings, dataset):
+    fig, ax = plt.subplots()
+    fig.set_size_inches(10, 6)
+    plt.grid(True)
+    plt.xticks(settings["numjobs"], settings["numjobs"])
+
+    for instance in dataset:
+        numjobs_list = [int(run["numjobs"]) for run in instance["data"]]
+        iops_list = [float(run["iops"]) for run in instance["data"]]
+        iops_stddev_list = [float(run["iops_stddev"]) for run in instance["data"]]
+
+        # the values above come sorted alphanumerically, so we sort them so that matplotlib draws connecting lines correctly
+        numjobs_list, iops_list, iops_stddev_list = zip(*sorted(list(zip(numjobs_list, iops_list, iops_stddev_list)), key=lambda x: x[0]))
+
+        ax.errorbar(
+            x=numjobs_list,
+            y=iops_list,
+            yerr=iops_stddev_list,
+            label=os.path.basename(instance["directory"])
+        )
+
+    ax.set_xlabel("Number of jobs")
+    ax.set_ylabel("IOPS")
+
+    # Set title
+    settings["type"] = ""
+    if settings["rw"] == "randrw":
+        supporting.create_title_and_sub(settings, plt, skip_keys=["iodepth"])
+    else:
+        supporting.create_title_and_sub(settings, plt, skip_keys=[])
+
+    ax.legend()
+    supporting.save_png(settings, plt, fig)
+
+
+def compchart_2dbarchart_jsonlogdata_old(settings, dataset):
     """This function is responsible for creating bar charts that compare data."""
     dataset_types = shared.get_dataset_types(dataset)
     data = shared.get_record_set_improved(settings, dataset, dataset_types)
