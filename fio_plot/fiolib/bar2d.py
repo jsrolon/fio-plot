@@ -164,8 +164,8 @@ def compchart_2dbarchart_jsonlogdata(settings, dataset):
 
     for instance in dataset:
         numjobs_list = [int(run["numjobs"]) for run in instance["data"]]
-        iops_list = [float(run["iops"]) for run in instance["data"]]
-        iops_stddev_list = [float(run["iops_stddev"]) for run in instance["data"]]
+        iops_list = [float(run["lat"]) for run in instance["data"]]
+        iops_stddev_list = [float(run["lat_stddev"]) for run in instance["data"]]
 
         # the values above come sorted alphanumerically, so we sort them so that matplotlib draws connecting lines correctly
         numjobs_list, iops_list, iops_stddev_list = zip(*sorted(list(zip(numjobs_list, iops_list, iops_stddev_list)), key=lambda x: x[0]))
@@ -178,7 +178,7 @@ def compchart_2dbarchart_jsonlogdata(settings, dataset):
         )
 
     ax.set_xlabel("Number of jobs")
-    ax.set_ylabel("IOPS")
+    ax.set_ylabel("Latency (ns)")
 
     # Set title
     settings["type"] = ""

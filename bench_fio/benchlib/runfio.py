@@ -74,8 +74,8 @@ def run_command(settings, benchmark, command):
 
 
 def run_fio(settings, benchmark):
-    output_directory = supporting.generate_output_directory(settings, benchmark)
-    output_file = f"{output_directory}/{benchmark['mode']}-{benchmark['iodepth']}-{benchmark['numjobs']}.json"
+    #output_directory = supporting.generate_output_directory(settings, benchmark)
+    output_file = f"{settings['output']}/{benchmark['engine']}-{benchmark['mode']}-{benchmark['iodepth']}-{benchmark['numjobs']}-{benchmark['block_size']}.json"
 
     command = [
         settings["fio_path"],
@@ -91,7 +91,7 @@ def run_fio(settings, benchmark):
         command.append(f"{target_parameter}={benchmark['target']}")
 
     if not settings["dry_run"]:
-        supporting.make_directory(output_directory)
+        supporting.make_directory(settings["output"])
         logger.info(f"Running [{' '.join(command)}]")
         run_command(settings, benchmark, command)
     # else:
