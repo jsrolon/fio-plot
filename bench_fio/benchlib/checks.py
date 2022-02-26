@@ -32,7 +32,7 @@ def check_if_mixed_workload(settings):
             return False
 
 
-def check_target_type(target, filetype):
+def check_target_type(target, filetype, engine):
     """Validate path and file / directory type.
     It also returns the appropritate fio command line parameter based on the
     file type.
@@ -44,8 +44,7 @@ def check_target_type(target, filetype):
 
     parameter = {keys[0]: "--filename", keys[1]: "--filename", keys[2]: "--directory"}
 
-    if (not filetype == "rbd") and (not "trtype" in target):
-
+    if not filetype == "rbd" and engine != "spdk":
         if not os.path.exists(target):
             print(f"Benchmark target {filetype} {target} does not exist.")
             sys.exit(10)

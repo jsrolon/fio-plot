@@ -88,7 +88,7 @@ def run_fio(settings, benchmark):
 
     command = supporting.expand_command_line(command, settings, benchmark)
 
-    target_parameter = checks.check_target_type(benchmark["target"], settings["type"])
+    target_parameter = checks.check_target_type(benchmark["target"], settings["type"], benchmark["engine"])
     if target_parameter:
         command.append(f"{target_parameter}={benchmark['target']}")
 
