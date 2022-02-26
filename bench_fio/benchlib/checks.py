@@ -44,7 +44,7 @@ def check_target_type(target, filetype):
 
     parameter = {keys[0]: "--filename", keys[1]: "--filename", keys[2]: "--directory"}
 
-    if not filetype == "rbd":
+    if (not filetype == "rbd") and (not "trtype" in target):
 
         if not os.path.exists(target):
             print(f"Benchmark target {filetype} {target} does not exist.")
