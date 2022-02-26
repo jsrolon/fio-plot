@@ -57,12 +57,14 @@ def run_raw_command(command, env=None):
 
 
 def run_command(settings, benchmark, command):
-    """The .ini templates take their values from environment variables.
+    """The .ini templates take their values from environment variables:
+    https://fio.readthedocs.io/en/latest/fio_doc.html#environment-variables
     This function obtains all the env vars as a dict, and appends the configuration
     settings from args as env variables as well.
     """
     output_directory = supporting.generate_output_directory(settings, benchmark)
     env = os.environ
+    settings = supporting.unpack_custom_env_vars(settings)
     settings = supporting.convert_dict_vals_to_str(settings)
     benchmark = supporting.convert_dict_vals_to_str(benchmark)
 

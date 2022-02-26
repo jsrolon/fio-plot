@@ -82,6 +82,18 @@ def expand_command_line(command, settings, benchmark):
     return command
 
 
+def unpack_custom_env_vars(settings):
+    env_vars_from_settings = settings["env_vars"]
+    env_vars_dict = {}
+    if env_vars_from_settings:
+        for env_var_def_str in env_vars_from_settings:
+            key, val = env_var_def_str.split("=")
+            env_vars_dict[key] = val
+
+    settings.update(env_vars_dict)
+    return settings
+
+
 def import_fio_template(template):
     config = configparser.ConfigParser()
     config.read(template)

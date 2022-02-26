@@ -273,6 +273,11 @@ def get_arguments(settings):
         action="store_const", dest="loglevel", const=logging.INFO,
         default=logging.WARNING,
     )
+    ag.add_argument(
+        "--env-vars",
+        help="Define env variables to pass to the fio binary invocation, ex. LD_PRELOAD=/path/to/lib",
+        nargs="+",
+    )
     return parser
 
 
@@ -306,6 +311,7 @@ def get_argument_description():
         "entire_device": "Benchmark entire device",
         "ceph_pool": "Ceph RBD pool",
         "fio_path": "Path to the fio executable",
-        "loglevel": "The logging level"
+        "loglevel": "The logging level",
+        "env_vars": "Env vars to pass to fio binary",
     }
     return descriptions
