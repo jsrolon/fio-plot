@@ -12,4 +12,4 @@ write_bw_log=${OUTPUT}/${MODE}-iodepth-${IODEPTH}-numjobs-${NUMJOBS}
 write_lat_log=${OUTPUT}/${MODE}-iodepth-${IODEPTH}-numjobs-${NUMJOBS}
 write_iops_log=${OUTPUT}/${MODE}-iodepth-${IODEPTH}-numjobs-${NUMJOBS}
 log_avg_msec=${LOGINTERVAL}
-
+thread=1

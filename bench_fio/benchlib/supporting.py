@@ -79,6 +79,9 @@ def expand_command_line(command, settings, benchmark):
         if settings["ss_ramp"]:
             command.append(f"--ss_ramp={settings['ss_ramp']}")
 
+    if "spdk" in settings["engine"]:
+        command.append(f"--filename={settings['target'][0]}")
+
     return command
 
 

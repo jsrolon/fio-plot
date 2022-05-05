@@ -40,6 +40,8 @@ def drop_caches(settings):
 
 
 def run_raw_command(command, env=None):
+    print(command)
+
     result = subprocess.run(
         command, shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=env
     )
@@ -48,10 +50,11 @@ def run_raw_command(command, env=None):
         stdout = result.stdout.decode("UTF-8").strip()
         logger.info(stdout)
 
-    if result.returncode > 0 or (len(str(result.stderr)) > 3):
+    if result.returncode != 0:
         stderr = result.stderr.decode("UTF-8").strip()
         logger.error(stderr)
-        sys.exit(1)
+        if result.returncode != 127 and "is_backend" not in stderr: # ridiculous workaround for spdk fio plugin
+            sys.exit(1)
 
     return result
 
