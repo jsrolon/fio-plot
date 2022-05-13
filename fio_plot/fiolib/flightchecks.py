@@ -96,13 +96,13 @@ def run_preflight_checks(settings):
             print("\nIf -l is specified, only one input directory can be used.\n")
             sys.exit(1)
 
-        if settings["iodepth"]:
-            if len(settings["iodepth"]) > 1:
-                print(
-                    "\n This graph type only supports one particular value for the iodepth parameter. \n \
-                Use the 3D graph type (-L) to plot both iodepth and numjobs for either iops or latency.\n"
-                )
-                sys.exit(1)
+        # if settings["iodepth"]:
+        #     if len(settings["iodepth"]) > 1:
+        #         print(
+        #             "\n This graph type only supports one particular value for the iodepth parameter. \n \
+        #         Use the 3D graph type (-L) to plot both iodepth and numjobs for either iops or latency.\n"
+        #         )
+        #         sys.exit(1)
 
     if settings["histogram"]:
         if len(settings["input_directory"]) > 1:
