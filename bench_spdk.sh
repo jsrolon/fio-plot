@@ -10,14 +10,14 @@ if [[ -z "${1}" ]]; then
 fi
 
 runtime="${1}"
-python3 -m bench_fio --fio-path "/nutanix-nvme-bench/src/fio/fio" \
-        --target "trtype=PCIe traddr=0000.08.00.0 ns=1" \
+python3 -m bench_fio --fio-path "/nutanix-src/fio/fio" \
+        --target "trtype=PCIe traddr=0000.bc.00.0 ns=1" \
         --size 4g \
         --type file \
-        --output="/nvme-fio/${runtime}-$(date +%Y_%m_%d_%H_%M_%S)" \
+        --output="/nvme-fio/results/host-spdk-$(date +%Y_%m_%d_%H_%M_%S)" \
         --mode read write randread randwrite \
         --iodepth 1 2 4 8 16 32 \
-        --numjobs 1 2 4 8 16 31 \
+        --numjobs 1 2 4 8 16 \
         --engine spdk \
-        --env-vars "LD_PRELOAD=/nutanix-nvme-bench/src/spdk/build/fio/spdk_nvme" \
+        --env-vars "LD_PRELOAD=/nutanix-src/spdk/build/fio/spdk_nvme" \
         --time-based

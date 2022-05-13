@@ -10,13 +10,14 @@ if [[ -z "${1}" ]]; then
 fi
 
 runtime="${1}"
-python3 -m bench_fio --fio-path "/fio/fio" \
-        --target "/dev/vdc" \
+python3 -m bench_fio --fio-path "/nutanix-src/fio/fio" \
+        --target "/dev/nvme2n1" \
         --size 4g \
         --type device \
-        --output="/nvme-fio/${runtime}-$(date +%Y_%m_%d_%H_%M_%S)" \
+        --output="/nvme-fio/results/host-nodirect-$(date +%Y_%m_%d_%H_%M_%S)" \
         --mode read write randread randwrite \
         --iodepth 1 2 4 8 16 32 \
-        --numjobs 1 2 4 8 16 31 \
+        --numjobs 1 2 4 8 16 \
         --engine io_uring \
+        --direct 0 \
         --time-based
