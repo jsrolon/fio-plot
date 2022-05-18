@@ -51,13 +51,11 @@ def run_raw_command(command, env=None):
     result.wait()
 
     if result and result.stdout:
-#         stdout = result.stdout.decode("UTF-8").strip()
         logger.info(result.stdout)
 
     if result.returncode != 0:
-#         stderr = result.stderr.decode("UTF-8").strip()
         logger.error(result.stderr)
-        if result.returncode != 127 and "is_backend" not in stderr: # ridiculous workaround for spdk fio plugin
+        if result.returncode != 127 and "is_backend" not in result.stderr: # ridiculous workaround for spdk fio plugin
             sys.exit(1)
 
     return result
