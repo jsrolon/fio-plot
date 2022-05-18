@@ -10,11 +10,11 @@ if [[ -z "${1}" ]]; then
 fi
 
 runtime="${1}"
-python3 -m bench_fio --fio-path "/nutanix-src/fio/fio" \
-        --target "/dev/nvme2n1" \
+python3 -m bench_fio --fio-path "/home/jrolon/fio/fio" \
+        --target "/dev/nvme0n1" \
         --size 4g \
         --type device \
-        --output="/nvme-fio/results/host-nodirect-$(date +%Y_%m_%d_%H_%M_%S)" \
+        --output="/nvme-fio/results/qemu-vfio-user-$(date +%Y_%m_%d_%H_%M_%S)" \
         --mode read write randread randwrite \
         --iodepth 1 2 4 8 16 32 \
         --numjobs 1 2 4 8 16 \
