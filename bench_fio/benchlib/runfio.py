@@ -43,22 +43,20 @@ def run_raw_command(command, env=None):
     print(command)
 
     result = subprocess.Popen(
-        command, shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=env
+        command, shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=env, text=True
     )
 
     # for fio
     os.sched_setaffinity(result.pid, [x for x in range(0, 35) if x % 2 == 0])
-    result.wait()
-
     stdout, stderr = result.communicate()
 
-    if result and result.stdout:
+    if result and stdout:
         logger.info(result.stdout)
 
     if result.returncode != 0:
         logger.error(stdout)
         logger.error(stderr)
-        if result.returncode != 127 and "is_backend" not in result.stderr.read(): # ridiculous workaround for spdk fio plugin
+        if result.returncode != 127 and "is_backend" not in stderr: # ridiculous workaround for spdk fio plugin
             sys.exit(1)
 
     return result
