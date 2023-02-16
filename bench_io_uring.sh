@@ -11,13 +11,12 @@ fi
 
 runtime="${1}"
 python3 -m bench_fio --fio-path "/home/jrolon/fio/fio" \
-        --target "/dev/nvme0n1" \
+        --target "/dev/vdc" \
         --size 4g \
         --type device \
-        --output="/nvme-fio/results/qemu-vfio-user-$(date +%Y_%m_%d_%H_%M_%S)" \
+        --output="/nvme-fio/results/qemu-scsi-$(date +%Y_%m_%d_%H_%M_%S)" \
         --mode read write randread randwrite \
         --iodepth 1 2 4 8 16 32 \
         --numjobs 1 2 4 8 16 \
-        --engine io_uring \
-        --direct 0 \
+        --engine libaio \
         --time-based

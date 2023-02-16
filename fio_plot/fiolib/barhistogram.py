@@ -1,6 +1,12 @@
 #!/usr/bin/env python3
+import numpy
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib as mpl
+import glob
+from pathlib import Path
+import re
+import seaborn as sns
 
 # import pprint
 from . import (
@@ -66,80 +72,62 @@ def autolabel(rects, axis):
 def chart_latency_histogram(settings, dataset):
     """This function is responsible to draw the 2D latency histogram,
     (a bar chart)."""
+    rawdata = dataset[0]["rawdata"][0]
+    job_options = rawdata["jobs"][0]["job options"]
 
-    record_set = shared.get_record_set_histogram(settings, dataset)
+    for numjob in settings["numjobs"]:
+        fig, hist_axes = plt.subplots()
+        # hist_axes.set_xscale('log')
+        hist_axes.set_yscale('symlog', linthresh=1e-7)
+        hist_axes.grid(ls='--', lw=0.25)
+        # hist_axes.set_frame_on(False)
+        hist_axes.set_ylabel("Density (log)")
+        hist_axes.set_xlabel("Latency (ms)")
 
-    # We have to sort the data / axis from low to high
-    sorted_result_ms = sort_latency_data(record_set["data"]["latency_ms"])
-    sorted_result_us = sort_latency_data(record_set["data"]["latency_us"])
-    sorted_result_ns = sort_latency_data(record_set["data"]["latency_ns"])
+        x = []
+        for iodepth in settings["iodepth"]:
+            data = []
+            for file in glob.glob(settings["input_directory"][0] + f'/{settings["rw"]}-iodepth-{iodepth}-numjobs-{numjob}_lat*.log'):
+                file_data = numpy.genfromtxt(file, delimiter=',', usecols=[1], dtype=[('latency', float)])
+                data.extend(file_data["latency"])
 
-    # This is just to use easier to understand variable names
-    x_series = sorted_result_ms["keys"]
-    y_series1 = sorted_result_ms["values"]
-    y_series2 = sorted_result_us["values"]
-    y_series3 = sorted_result_ns["values"]
+            dist_axes = sns.distplot(data, hist=False, rug=True, norm_hist=False, label=iodepth, kde_kws={"fill": True, "bw_adjust": 3})
+            # dist_axes.set_xscale('log')
 
-    # us/ns histogram data is missing 2000/>=2000 fields that ms data has
-    # so we have to add dummy data to match x-axis size
-    y_series2.extend([0, 0])
-    y_series3.extend([0, 0])
+            # hist_axes.set_title(f"iodepth={iodepth}", fontdict={"fontsize": 6})
+            # hist_axs[i][j].set_xlim(xmin=0)
+            # hist_axs[i][j].set_xscale('log')
+            # hist_axs[i][j].hist(data, density=True)
 
-    # Create the plot
-    fig, ax1 = plt.subplots()
-    fig.set_size_inches(10, 6)
+        hist_axes.set_title(" | ".join(
+            [rawdata['fio version'],
+             "spdk v22.01",
+             f"rw {settings['rw']}",
+             f"ioengine {job_options['ioengine']}",
+             f"bs {job_options['bs']}"]),
+            fontdict={"fontsize": 9})
 
-    # Make the positioning of the bars for ns/us/ms
-    x_pos = np.arange(0, len(x_series) * 3, 3)
-    width = 1
+        # hist_axes.set_xticks([1e4, 5e4, 1e5, 1e6], labels=["10ms", "50ms", "100ms", "1s"])
+        hist_axes.xaxis.set_major_formatter(mpl.ticker.FuncFormatter(lambda x, pos: '{:.0f}'.format(x / 1e3)))
 
-    # how much of the IO falls in a particular latency class ns/us/ms
-    coverage_ms = round(sum(y_series1), 2)
-    coverage_us = round(sum(y_series2), 2)
-    coverage_ns = round(sum(y_series3), 2)
+        handles, labels = hist_axes.get_legend_handles_labels()
+        handles, labels = zip(*sorted(list(zip(handles, labels)), key=lambda item: int(item[1])))
+        hist_axes.legend(handles, labels, title="Queue depth")
 
-    # Draw the bars
-    rects1 = ax1.bar(x_pos, y_series1, width, color="r")
-    rects2 = ax1.bar(x_pos + width, y_series2, width, color="b")
-    rects3 = ax1.bar(x_pos + width + width, y_series3, width, color="g")
+        run_results_folder = Path(settings['input_directory'][0]).parts[-4]
+        run_name = re.sub(r'-2022.+$', '', run_results_folder)
 
-    # Configure the axis and labels
-    ax1.set_ylabel("Percentage of I/O")
-    ax1.set_xlabel("Latency")
-    ax1.set_xticks(x_pos + width / 2)
-    ax1.set_xticklabels(x_series)
+        # hist_axes.set_ylim(ymax=1e-3)
+        hist_axes.set_xlim(xmin=0)
 
-    # Make room for labels by scaling y-axis up (max is 100%)
-    ax1.set_ylim(0, 100 * 1.1)
+        # Hide the right and top spines
+        hist_axes.spines.right.set_visible(False)
+        hist_axes.spines.top.set_visible(False)
 
-    label_ms = "Latency in ms ({0:05.2f}%)".format(coverage_ms)
-    label_us = "Latency in us  ({0:05.2f}%)".format(coverage_us)
-    label_ns = "Latency in ns  ({0:05.2f}%)".format(coverage_ns)
+        # Only show ticks on the left and bottom spines
+        hist_axes.yaxis.set_ticks_position('left')
+        hist_axes.xaxis.set_ticks_position('bottom')
 
-    # Configure the title
-    settings["type"] = ""
-    supporting.create_title_and_sub(settings, plt, ["type", "filter"])
-    # Configure legend
-    ax1.legend(
-        (rects1[0], rects2[0], rects3[0]),
-        (label_ms, label_us, label_ns),
-        frameon=False,
-        loc="best",
-    )
-
-    # puts a percentage above each bar (ns/us/ms)
-    autolabel(rects1, ax1)
-    autolabel(rects2, ax1)
-    autolabel(rects3, ax1)
-
-    supporting.plot_source(settings, plt, ax1)
-    supporting.plot_fio_version(settings, record_set["fio_version"], plt, ax1)
-
-    # if settings['source']:
-    #    sourcelength = len(settings['source'])
-    #    offset = 1.0 - sourcelength / 120
-    #    fig.text(offset, 0.03, settings['source'])
-    #
-    # Save graph to PNG file
-    #
-    supporting.save_png(settings, plt, fig)
+        fig.suptitle(f"{run_name}, {numjob} thread(s)")
+        # plt.tight_layout()
+        supporting.save_png(settings, plt, fig)

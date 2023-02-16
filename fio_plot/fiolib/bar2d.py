@@ -3,6 +3,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 import palettable
+from pathlib import Path
+import re
 
 from . import (
     supporting,
@@ -91,13 +93,19 @@ def chart_2dbarchart_jsonlogdata(settings, dataset):
     fig, iops_axes = plt.subplots()
 
     iops_axes.set_ylabel("Mean IOPS")
-    iops_axes.set_xlabel("Number of threads")
+    iops_axes.set_xlabel("Threads")
 
-    iops_axes.set_prop_cycle(color=palettable.colorbrewer.qualitative.Set2_6.mpl_colors)
+    # iops_axes.set_prop_cycle(marker=['o', '+', 'x'])
+    # iops_axes.set_prop_cycle(color=palettable.scientific.sequential.Acton_6.mpl_colors)
 
     iodepths = {}
     for job in dataset[0]["rawdata"]:
         options = job["jobs"][0]["job options"]
+
+        iops_axes.set_title(" | ".join(
+            [job['fio version'], "spdk v22.01", f"rw {options['rw']}", f"ioengine {options['ioengine']}", f"bs {options['bs']}"]),
+                            fontdict={"fontsize": 9})
+
         job = job["jobs"][0]["read"] # todo: dinamically choose read/write
         iodepth = options["iodepth"]
         numjobs = options["numjobs"]
@@ -118,15 +126,23 @@ def chart_2dbarchart_jsonlogdata(settings, dataset):
         y = [tuple[1]["mean"] for tuple in sorted_iodepth]
         yerr = [tuple[1]["stddev"] for tuple in sorted_iodepth]
 
-        iops_axes.errorbar(x, y, yerr, fmt='D', linewidth=0.5, capsize=6, ls='-', label=iodepth, mec='black', mew=0.25)
-        iops_axes.yaxis.set_major_formatter(mpl.ticker.StrMethodFormatter('{x:,.0f}'))
+        iops_axes.errorbar(x, y, yerr, fmt="o", linewidth=1, capsize=6, ls='-', label=iodepth, mec='black', mew=0.25)
+        # iops_axes.yaxis.set_major_formatter(mpl.ticker.StrMethodFormatter('{x:,.0f}'))
+        iops_axes.yaxis.set_major_formatter(mpl.ticker.FuncFormatter(lambda x, pos: '{:,.0f}'.format(x / 1000) + 'K'))
 
     handles, labels = iops_axes.get_legend_handles_labels()
     handles, labels = zip(*sorted(list(zip(handles, labels)), key=lambda item: int(item[1])))
     iops_axes.legend(handles, labels, title="Queue depth")
 
-    iops_axes.grid(ls='--', lw=0.25)
+    iops_axes.set_ylim(ymin=0, ymax=8e5)
+    iops_axes.grid(ls='--', lw=0.25, axis="y")
     iops_axes.set_frame_on(False)
+
+    run_results_folder = Path(settings['input_directory'][0]).parts[-4]
+    run_name = re.sub(r'-2022.+$', '', run_results_folder)
+
+    mid = (fig.subplotpars.right + fig.subplotpars.left) / 2
+    fig.suptitle(run_name, x=mid)
 
     #
     # Save graph to PNG file
