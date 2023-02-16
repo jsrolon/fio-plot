@@ -406,8 +406,9 @@ def save_png(settings, plt, fig):
     title = settings["title"].replace(" ", "-")
     title = title.replace("/", "-")
     plt.tight_layout(rect=[0, 0, 1, 1])
+    results_folder_name = settings['input_directory'][0].split("/")[5]
     random = random_char(2)
-    savename = f"{title}_{now}_{random}.pdf" if settings["output_filename"] is None else settings["output_filename"]
+    savename = f"{results_folder_name}-{settings['rw']}-{now}-{random}.pdf" if settings["output_filename"] is None else settings["output_filename"]
     print(f"\n Saving to file {savename}\n")
     fig.savefig(savename, dpi=settings["dpi"], format="pdf")
     # write_png_metadata(savename, settings)
