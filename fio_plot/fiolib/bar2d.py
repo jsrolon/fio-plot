@@ -91,9 +91,10 @@ def chart_2dbarchart_jsonlogdata(settings, dataset):
     data = shared.get_record_set(settings, dataset, dataset_types)
     # pprint.pprint(data)
     fig, iops_axes = plt.subplots()
+    # fig.set_size_inches(6.4, 6.4)
 
-    iops_axes.set_ylabel("Mean IOPS")
-    iops_axes.set_xlabel("Threads")
+    iops_axes.set_ylabel("Mean IOPS", fontsize=20)
+    iops_axes.set_xlabel("Threads", fontsize=20)
 
     # iops_axes.set_prop_cycle(marker=['o', '+', 'x'])
     # iops_axes.set_prop_cycle(color=palettable.scientific.sequential.Acton_6.mpl_colors)
@@ -126,23 +127,27 @@ def chart_2dbarchart_jsonlogdata(settings, dataset):
         y = [tuple[1]["mean"] for tuple in sorted_iodepth]
         yerr = [tuple[1]["stddev"] for tuple in sorted_iodepth]
 
-        iops_axes.errorbar(x, y, yerr, fmt="o", linewidth=1, capsize=6, ls='-', label=iodepth, mec='black', mew=0.25)
+        iops_axes.errorbar(x, y, yerr, fmt="o", linewidth=1, capsize=6, ls='-', label=iodepth, mec='black', mew=0.25, ms=15)
         # iops_axes.yaxis.set_major_formatter(mpl.ticker.StrMethodFormatter('{x:,.0f}'))
         iops_axes.yaxis.set_major_formatter(mpl.ticker.FuncFormatter(lambda x, pos: '{:,.0f}'.format(x / 1000) + 'K'))
 
     handles, labels = iops_axes.get_legend_handles_labels()
     handles, labels = zip(*sorted(list(zip(handles, labels)), key=lambda item: int(item[1])))
-    iops_axes.legend(handles, labels, title="Queue depth")
+    fig.legend(handles, labels, title="Queue depth", fontsize=20)
+    # fig.tight_layout()
+    # fig.subplots_adjust(bottom=0.25)
 
     iops_axes.set_ylim(ymin=0, ymax=8e5)
-    iops_axes.grid(ls='--', lw=0.25, axis="y")
+    iops_axes.grid(ls='--', lw=2.5, axis="y")
     iops_axes.set_frame_on(False)
+    iops_axes.tick_params(axis='both', which='major', labelsize=20)
 
     run_results_folder = Path(settings['input_directory'][0]).parts[-4]
     run_name = re.sub(r'-2022.+$', '', run_results_folder)
 
     mid = (fig.subplotpars.right + fig.subplotpars.left) / 2
-    # fig.suptitle(run_name, x=mid)
+    fig.suptitle(run_name, x=mid, fontsize=20)
+    # plt.show()
 
     #
     # Save graph to PNG file
