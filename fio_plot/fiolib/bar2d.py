@@ -133,7 +133,8 @@ def chart_2dbarchart_jsonlogdata(settings, dataset):
 
     handles, labels = iops_axes.get_legend_handles_labels()
     handles, labels = zip(*sorted(list(zip(handles, labels)), key=lambda item: int(item[1])))
-    fig.legend(handles, labels, title="Queue depth", fontsize=20)
+    legend = iops_axes.legend(handles, labels, title="Queue depth", fontsize=16)
+    legend.get_title().set_fontsize('16')
     # fig.tight_layout()
     # fig.subplots_adjust(bottom=0.25)
 
