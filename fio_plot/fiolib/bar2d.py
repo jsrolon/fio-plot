@@ -102,9 +102,9 @@ def chart_2dbarchart_jsonlogdata(settings, dataset):
     for job in dataset[0]["rawdata"]:
         options = job["jobs"][0]["job options"]
 
-        iops_axes.set_title(" | ".join(
-            [job['fio version'], "spdk v22.01", f"rw {options['rw']}", f"ioengine {options['ioengine']}", f"bs {options['bs']}"]),
-                            fontdict={"fontsize": 9})
+        # iops_axes.set_title(" | ".join(
+        #     [job['fio version'], "spdk v22.01", f"rw {options['rw']}", f"ioengine {options['ioengine']}", f"bs {options['bs']}"]),
+        #                     fontdict={"fontsize": 9})
 
         job = job["jobs"][0]["read"] # todo: dinamically choose read/write
         iodepth = options["iodepth"]
@@ -142,7 +142,7 @@ def chart_2dbarchart_jsonlogdata(settings, dataset):
     run_name = re.sub(r'-2022.+$', '', run_results_folder)
 
     mid = (fig.subplotpars.right + fig.subplotpars.left) / 2
-    fig.suptitle(run_name, x=mid)
+    # fig.suptitle(run_name, x=mid)
 
     #
     # Save graph to PNG file
