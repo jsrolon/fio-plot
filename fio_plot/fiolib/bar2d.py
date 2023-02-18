@@ -107,7 +107,8 @@ def chart_2dbarchart_jsonlogdata(settings, dataset):
         #     [job['fio version'], "spdk v22.01", f"rw {options['rw']}", f"ioengine {options['ioengine']}", f"bs {options['bs']}"]),
         #                     fontdict={"fontsize": 9})
 
-        job = job["jobs"][0]["read"] # todo: dinamically choose read/write
+        job_rw_type = settings["rw"].replace("rand", "")
+        job = job["jobs"][0][job_rw_type] # todo: dinamically choose read/write
         iodepth = options["iodepth"]
         numjobs = options["numjobs"]
 
@@ -133,10 +134,12 @@ def chart_2dbarchart_jsonlogdata(settings, dataset):
 
     handles, labels = iops_axes.get_legend_handles_labels()
     handles, labels = zip(*sorted(list(zip(handles, labels)), key=lambda item: int(item[1])))
-    legend = iops_axes.legend(handles, labels, title="Queue depth", fontsize=16)
-    legend.get_title().set_fontsize('16')
+    legend_fig = plt.figure("legend plot")
+    leg = legend_fig.legend(handles, labels, title="Queue depth", ncol=5, fontsize=16)
+    leg.get_title().set_fontsize('16')
     # fig.tight_layout()
     # fig.subplots_adjust(bottom=0.25)
+    iops_axes.remove()
 
     iops_axes.set_ylim(ymin=0, ymax=8e5)
     iops_axes.grid(ls='--', lw=2.5, axis="y")
@@ -147,13 +150,13 @@ def chart_2dbarchart_jsonlogdata(settings, dataset):
     run_name = re.sub(r'-2022.+$', '', run_results_folder)
 
     mid = (fig.subplotpars.right + fig.subplotpars.left) / 2
-    fig.suptitle(run_name, x=mid, fontsize=20)
+    # fig.suptitle(run_name, x=mid, fontsize=20)
     # plt.show()
 
     #
     # Save graph to PNG file
     #
-    supporting.save_png(settings, plt, fig)
+    supporting.save_png(settings, plt, legend_fig)
 
 
 def compchart_2dbarchart_jsonlogdata(settings, dataset):
