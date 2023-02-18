@@ -405,6 +405,7 @@ def save_png(settings, plt, fig):
     now = datetime.now().strftime("%Y-%m-%d_%H%M%S")
     title = settings["title"].replace(" ", "-")
     title = title.replace("/", "-")
+    # size = fig.get_size_inches()
     plt.tight_layout(rect=[0, 0, 1, 1])
     random = random_char(2)
     savename = f"{title}_{now}_{random}.svg" if settings["output_filename"] is None else settings["output_filename"]

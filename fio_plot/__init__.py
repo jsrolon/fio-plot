@@ -33,16 +33,19 @@ def main():
     #     # "font.sans-serif": "Helvetica"
     # })
 
-    plt.yticks(fontsize=20)
-    plt.xticks(x, ["fio end-to-end", "fio to\nnvme driver", "nvme driver\nto bdev", "bdev to\nhardware"])
-    plt.xticks(rotation=45, ha='right', rotation_mode='anchor', fontsize=18)
+    plt.yticks(fontsize=16)
+    plt.xticks(x, ["fio end\nto end", "fio to nvme\ndriver", "nvme driver\nto bdev", "bdev to\nhardware"])
+    plt.xticks(fontsize=14)
     # plt.ylim(bottom=0, top=35)
-    plt.ylabel("Time spent at layer (μs)", fontsize=20)
+    plt.ylabel("Time (μs)", fontsize=16)
     ax.bar(x=x-0.2, height=read_mean, yerr=read_err, capsize=5, width=width, color=['grey', '#b6d7a8ff', '#f9cb9cff', '#9fc5e8ff'])
     ax.bar(x=x+0.2, height=write_mean, yerr=write_err, width=width, capsize=5, hatch="//", linewidth=2, facecolor="none", edgecolor=['grey', '#b6d7a8ff', '#f9cb9cff', '#9fc5e8ff'])
     plt.rcParams['hatch.linewidth'] = 2
-    plt.tight_layout()
     plt.legend(["Reads", "Writes"], fontsize=16)
+
+    fig = plt.gcf()
+    size = fig.set_size_inches(6.4, 3)
+    plt.tight_layout()
 
     ax.set_frame_on(False)
 
