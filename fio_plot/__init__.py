@@ -64,7 +64,9 @@ def main():
     ax.bar(x=x-0.2, height=read_mean, yerr=read_err, capsize=5, width=width, color=['#b6d7a8ff', '#f9cb9cff', '#9fc5e8ff'])
     ax.bar(x=x+0.2, height=write_mean, yerr=write_err, width=width, capsize=5, hatch="//", linewidth=2, facecolor="none", edgecolor=['#b6d7a8ff', '#f9cb9cff', '#9fc5e8ff'])
     plt.rcParams['hatch.linewidth'] = 2
-    plt.legend(handles=[f_read, f_write], labels=["Reads", "Writes"], fontsize=16)
+    legend = plt.legend(handles=[f_read, f_write], labels=["Reads", "Writes"], fontsize=16)
+    legend.legendHandles[0].set(color="gray")
+    legend.legendHandles[1].set(hatch="//", linewidth=2, facecolor="none", edgecolor="gray")
 
     fig = plt.gcf()
     size = fig.set_size_inches(6.4, 3)
