@@ -24,7 +24,7 @@ def main():
     read_errs = [[3.38], [2.48], [1.69]]
 
     x_first = np.arange(1)
-    x = np.arange(2, 4)
+    x = np.arange(1, 4)
 
     # write_mean = [48.22, 26.95, 11.48, 9.79]
     # write_err = [4.43, 5.03, 2.76, 1.38]
@@ -43,8 +43,8 @@ def main():
     # })
 
     plt.yticks(fontsize=16)
-    # plt.xticks(x, ["fio end\nto end", "fio to nvme\ndriver", "nvme driver\nto bdev", "bdev to\nhardware"])
-    plt.xticks(x_first, ["fio end\nto end"])
+    plt.xticks(np.arange(4), ["fio end\nto end", "fio to nvme\ndriver", "nvme driver\nto bdev", "bdev to\nhardware"])
+    # plt.xticks(x_first, ["fio end\nto end"])
     plt.xticks(fontsize=14)
     # plt.ylim(bottom=0, top=35)
     plt.ylabel("Time (μs)", fontsize=16)
@@ -61,8 +61,8 @@ def main():
     ax.bar(x=x_first+0.2, height=write_mean[2], yerr=write_err[2], capsize=5, hatch="//", linewidth=2, facecolor="none", width=width, edgecolor=['#9fc5e8ff'],
            bottom=38.43)
 
-    # ax.bar(x=x-0.2, height=read_mean, yerr=read_err, capsize=5, width=width, color=['#b6d7a8ff', '#f9cb9cff', '#9fc5e8ff'])
-    # ax.bar(x=x+0.2, height=write_mean, yerr=write_err, width=width, capsize=5, hatch="//", linewidth=2, facecolor="none", edgecolor=['#b6d7a8ff', '#f9cb9cff', '#9fc5e8ff'])
+    ax.bar(x=x-0.2, height=read_mean, yerr=read_err, capsize=5, width=width, color=['#b6d7a8ff', '#f9cb9cff', '#9fc5e8ff'])
+    ax.bar(x=x+0.2, height=write_mean, yerr=write_err, width=width, capsize=5, hatch="//", linewidth=2, facecolor="none", edgecolor=['#b6d7a8ff', '#f9cb9cff', '#9fc5e8ff'])
     plt.rcParams['hatch.linewidth'] = 2
     plt.legend(handles=[f_read, f_write], labels=["Reads", "Writes"], fontsize=16)
 
