@@ -90,8 +90,16 @@ def chart_2dbarchart_jsonlogdata(settings, dataset):
     #pprint.pprint(dataset)
     data = shared.get_record_set(settings, dataset, dataset_types)
     # pprint.pprint(data)
+    mpl.rcParams['pdf.fonttype'] = 42
+    mpl.rcParams['ps.fonttype'] = 42
+
     fig, iops_axes = plt.subplots()
-    # fig.set_size_inches(6.4, 6.4)
+    iops_axes.spines['bottom'].set_color('black')
+    iops_axes.spines['top'].set_color('black')
+    iops_axes.spines['right'].set_color('black')
+    iops_axes.spines['left'].set_color('black')
+
+    fig.set_size_inches(6.4, 6.4)
 
     iops_axes.set_ylabel("Mean IOPS", fontsize=20)
     iops_axes.set_xlabel("Threads", fontsize=20)
@@ -134,16 +142,17 @@ def chart_2dbarchart_jsonlogdata(settings, dataset):
 
     handles, labels = iops_axes.get_legend_handles_labels()
     handles, labels = zip(*sorted(list(zip(handles, labels)), key=lambda item: int(item[1])))
-    legend_fig = plt.figure("legend plot")
-    leg = legend_fig.legend(handles, labels, title="Queue depth", ncol=5, fontsize=16)
-    leg.get_title().set_fontsize('16')
-    # fig.tight_layout()
-    # fig.subplots_adjust(bottom=0.25)
-    iops_axes.remove()
+    # legend_fig = plt.figure("legend plot")
+    # leg = legend_fig.legend(handles, labels, title="Queue depth", ncol=5, fontsize=16)
+    # leg.get_title().set_fontsize('16')
+    fig.tight_layout()
+    fig.subplots_adjust(bottom=0.25)
+    # iops_axes.remove()
 
+    iops_axes.set_xlim(xmin=-0.5, xmax=4.5)
     iops_axes.set_ylim(ymin=0, ymax=8e5)
     iops_axes.grid(ls='--', lw=2.5, axis="y")
-    iops_axes.set_frame_on(False)
+    iops_axes.set_frame_on(True)
     iops_axes.tick_params(axis='both', which='major', labelsize=20)
 
     run_results_folder = Path(settings['input_directory'][0]).parts[-4]
@@ -156,7 +165,9 @@ def chart_2dbarchart_jsonlogdata(settings, dataset):
     #
     # Save graph to PNG file
     #
-    supporting.save_png(settings, plt, legend_fig)
+    mpl.rcParams['pdf.fonttype'] = 42
+    mpl.rcParams['ps.fonttype'] = 42
+    supporting.save_png(settings, plt, fig)
 
 
 def compchart_2dbarchart_jsonlogdata(settings, dataset):

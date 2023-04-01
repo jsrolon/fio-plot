@@ -405,7 +405,7 @@ def save_png(settings, plt, fig):
     now = datetime.now().strftime("%Y-%m-%d_%H%M%S")
     title = settings["title"].replace(" ", "-")
     title = title.replace("/", "-")
-    # fig.set_size_inches(4.25, 4)
+    fig.set_size_inches(4.25, 4)
     plt.tight_layout(rect=[0, 0, 1, 1])
     results_folder_name = settings['input_directory'][0].split("/")[5]
     random = random_char(2)
