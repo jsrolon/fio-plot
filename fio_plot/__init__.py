@@ -5,6 +5,7 @@
 # Requires matplotib and numpy.
 #
 # import pprint
+import matplotlib
 import matplotlib.pyplot as plt
 from .fiolib import (
     argparsing,
@@ -13,7 +14,10 @@ from .fiolib import (
 )
 import numpy as np
 
+
 def main():
+    matplotlib.rcParams['pdf.fonttype'] = 42
+    matplotlib.rcParams['ps.fonttype'] = 42
     # y = [26.66, 17.82, 11.41]
     # read_mean = [26.66, 8.84, 6.41, 11.41]
     # read_err = [2.86, 3.38, 2.48, 1.69]
